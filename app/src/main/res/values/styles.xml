@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.TodayBooks" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- 테마에 필요한 속성들을 추가해주세요 -->
+    </style>
+</resources>

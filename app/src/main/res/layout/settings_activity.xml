@@ -21,8 +21,8 @@
 
     <LinearLayout
         android:id="@+id/CategoryListLayout"
-        android:layout_width="280dp"
-        android:layout_height="450dp"
+        android:layout_width="350dp"
+        android:layout_height="480dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,17 +34,19 @@
             android:id="@+id/bookCategories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:choiceMode="multipleChoice"/>
+            android:choiceMode="multipleChoice" />
 
     </LinearLayout>
 
     <Button
         android:id="@+id/selectButton"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="160dp"
         android:layout_height="60dp"
         android:backgroundTint="#7ACE5D"
         android:fontFamily="@font/pretendard_semibold"
         android:text="항목 선택 완료"
+        android:textColor="#FFFFFF"
         android:textSize="18dp"
         app:cornerRadius="14dp"
         app:layout_constraintBottom_toBottomOf="parent"

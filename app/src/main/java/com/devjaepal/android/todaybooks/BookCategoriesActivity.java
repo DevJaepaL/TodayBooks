@@ -50,7 +50,7 @@ public class BookCategoriesActivity extends AppCompatActivity {
                 "소설", "시 / 에세이", "컴퓨터 / IT",
                 "국어 / 외국어", "여행", "가정 / 요리",
                 "어린이", "유아", "종교", "예술 / 대중문화",
-                "자연 / 과학", "사회 / 정치", "역사", "자기계발", "경제 / 경엉"};
+                "자연 / 과학", "사회 / 정치", "역사", "자기계발", "경제 / 경영"};
 
         // 배열에 있는 카테고리 문자열 전부 추가.
         bookCategoriesList = new ArrayList<>();
