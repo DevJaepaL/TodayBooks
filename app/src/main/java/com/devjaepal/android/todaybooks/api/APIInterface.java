@@ -13,6 +13,8 @@ public interface APIInterface {
             @Header("X-Naver-Client-Id") String ClientId,
             @Header("X-Naver-Client-Secret") String secretPwd,
             @Path("type") String type,
-            @Query("query") String query
+            @Query("query") String query,
+            @Query("sort") String sort,
+            @Query("display") int display
     );
 }
