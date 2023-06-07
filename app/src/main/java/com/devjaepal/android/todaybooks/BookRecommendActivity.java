@@ -25,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.devjaepal.android.todaybooks.api.BookItem;
 import com.devjaepal.android.todaybooks.api.BookSearchResponse;
 import com.devjaepal.android.todaybooks.api.CategoryKewordUtility;
+import com.devjaepal.android.todaybooks.db.todayBookDB;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -42,6 +43,9 @@ public class BookRecommendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recommend);
 
+        // 이전 액티비티로부터 선택한 카테고리들을 가져온다.
+        List<String> selectedUserCategory = getSelectedCategoriesFromDB();
+
         TextView detailTextBtn = findViewById(R.id.detailTextBtn);
         detailTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +55,6 @@ public class BookRecommendActivity extends AppCompatActivity {
         });
 
         // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
-        List<String> selectedUserCategory = getIntent().getStringArrayListExtra("selectedCategories");
         Random random = new Random();
         String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
 
@@ -161,5 +164,13 @@ public class BookRecommendActivity extends AppCompatActivity {
     private void openBookLink(String bookLink) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(bookLink));
         startActivity(intent);
+    }
+
+    // DB에 저장된 카테고리들을 가져오는 메소드.
+    private List<String> getSelectedCategoriesFromDB() {
+        todayBookDB db = new todayBookDB(this);
+        List<String> selectedCategories = db.getAllCategories();
+        db.close();
+        return selectedCategories;
     }
 }

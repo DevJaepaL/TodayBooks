@@ -22,7 +22,8 @@ public class BookItem {
         @SerializedName("description")
         private String description;
 
-        public String getImageUrl() {
+
+    public String getImageUrl() {
             return image;
         }
 
@@ -45,4 +46,28 @@ public class BookItem {
         public String getDescription() {
             return description;
         }
+
+    public void setImageUrl(String imageUrl) {
+        this.image = imageUrl;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

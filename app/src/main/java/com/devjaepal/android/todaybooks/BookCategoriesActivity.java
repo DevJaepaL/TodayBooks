@@ -10,6 +10,8 @@ import android.widget.ListView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.devjaepal.android.todaybooks.db.todayBookDB;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,33 +22,6 @@ public class BookCategoriesActivity extends AppCompatActivity {
     private Button selectButton;
     private ArrayAdapter<String> adapter;
     private List<String> bookCategoriesList;
-
-    // 선택한 카테고리를 Alert로 보여주는 메소드
-    private void showSelectedCategoriesDialog(List<String> selectedCategories) {
-        StringBuilder messageBuilder = new StringBuilder();
-        for (String bookCategory : selectedCategories) {
-            messageBuilder.append("· ").append(bookCategory).append("\n");
-        }
-
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(BookCategoriesActivity.this)
-                .setTitle("선택한 항목")
-                .setMessage(messageBuilder.toString())
-                .setPositiveButton("확 인", ((dialog, which) -> {
-                    // 확인 버튼 눌렀을 때 다음 액티비티로 넘어간다.
-                    openBookRecommendActivity(selectedCategories);
-                }));
-
-        AlertDialog dialog = alertBuilder.create();
-        dialog.show();
-    }
-
-    // Intent를 사용해서 사용자가 선택한 주제들을 다른 액티비티로 전달하는 메소드
-    private void openBookRecommendActivity(List<String> selectedCategories) {
-        // BookCategories 액티비티 -> BookRecommend 액티비티로 정보 전달하는 Intent.
-        Intent intent = new Intent(BookCategoriesActivity.this, BookRecommendActivity.class);
-        intent.putStringArrayListExtra("selectedCategories", new ArrayList<>(selectedCategories));
-        startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +65,7 @@ public class BookCategoriesActivity extends AppCompatActivity {
             }
             // 선택한 항목이 있을 경우 Dialog 표시
             if (!selectedBookCategories.isEmpty()) {
+                saveSelectedCategories(selectedBookCategories); // DB에 카테고리들을 저장한다.
                 showSelectedCategoriesDialog(selectedBookCategories);
             } else {
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(BookCategoriesActivity.this)
@@ -103,5 +79,39 @@ public class BookCategoriesActivity extends AppCompatActivity {
         });
     }
 
+    // 선택한 카테고리를 Alert로 보여주는 메소드
+    private void showSelectedCategoriesDialog(List<String> selectedCategories) {
+        StringBuilder messageBuilder = new StringBuilder();
+        for (String bookCategory : selectedCategories) {
+            messageBuilder.append("· ").append(bookCategory).append("\n");
+        }
 
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(BookCategoriesActivity.this)
+                .setTitle("선택한 항목")
+                .setMessage(messageBuilder.toString())
+                .setPositiveButton("확 인", ((dialog, which) -> {
+                    // 확인 버튼 눌렀을 때 다음 액티비티로 넘어간다.
+                    openBookRecommendActivity(selectedCategories);
+                }));
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+
+    // 선택한 카테고리들을 DB에 저장하는 메소드
+    private void saveSelectedCategories(List<String> selectedCategories) {
+        todayBookDB db = new todayBookDB(this);
+        for(String category : selectedCategories) {
+            db.addUserCategory(category);
+        }
+        db.close();
+    }
+
+    // Intent를 사용해서 사용자가 선택한 주제들을 다른 액티비티로 전달하는 메소드
+    private void openBookRecommendActivity(List<String> selectedCategories) {
+        // BookCategories 액티비티 -> BookRecommend 액티비티로 정보 전달하는 Intent.
+        Intent intent = new Intent(BookCategoriesActivity.this, BookRecommendActivity.class);
+        intent.putStringArrayListExtra("selectedCategories", new ArrayList<>(selectedCategories));
+        startActivity(intent);
+    }
 }
