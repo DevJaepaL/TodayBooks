@@ -4,20 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/startButton"
+
+    <TextView
+        android:id="@+id/mainLogoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="56dp"
-        android:fontFamily="@font/pretendard_bold"
-        android:onClick="startBookCategoriesActivity"
-        android:text="테스트"
-        android:textColor="#FFFFFF"
+        android:layout_marginTop="60dp"
+        android:fontFamily="@font/pretendard_black"
+        android:text="오책\n볼래?"
+        android:textColor="#000000"
+        android:textSize="70sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/startLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainLogoText"
+        app:layout_constraintVertical_bias="0.212"
+        app:srcCompat="@drawable/applogo" />
+
+<!--    android:background="@drawable/round_button"-->
+    <Button
+        android:id="@+id/startButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="140sp"
+        android:layout_height="60sp"
+        android:background="@drawable/round_button"
+        android:backgroundTint="#7ACE5D"
+        android:elevation="10dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:onClick="appStart"
+        android:stateListAnimator="@null"
+        android:text="시작하기"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startLogo"
+        app:layout_constraintVertical_bias="0.553" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

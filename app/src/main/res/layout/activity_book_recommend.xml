@@ -5,76 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BookRecommendActivity">
+    <!--  책 표지 이미지 뷰  -->
+    <!-- 책 이름 텍스트 뷰  -->
 
     <TextView
         android:id="@+id/showMainText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/pretendard_black"
         android:text="오늘의 추천 책"
-        android:textColor="#1CD04E"
+        android:textColor="#000000"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <TextView
+        android:id="@+id/bookTitleText"
         android:layout_width="280dp"
-        android:layout_height="350dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:lineSpacingExtra="0.5dp"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/NaverBookImage"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.443">
-
-        <ImageView
-            android:id="@+id/NaverBookImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="16dp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/bookStatusButton"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:fontFamily="@font/pretendard_black"
-        android:text="책 상세 보기"
-        android:textColor="#9C9C9C"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/showMainText"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/NaverBookImage"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toTopOf="@+id/likeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showMainText" />
+
+    <TextView
+        android:id="@+id/detailTextBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/pretendard_black"
+        android:text="책 정보 상세보기"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/likeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NaverBookImage"
+        app:layout_constraintVertical_bias="0.952" />
 
     <Button
         android:id="@+id/likeButton"
-        style="@style/Widget.Material3.Button.IconButton.Filled"
-        android:layout_width="145dp"
-        android:layout_height="65dp"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="180dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="100dp"
         android:backgroundTint="#7ACE5D"
+        android:fontFamily="@font/pretendard_bold"
+        android:shadowColor="#000000"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="5"
         android:text="읽고 싶어요"
+        android:textAlignment="textStart"
         android:textColor="#FFFFFF"
-        android:textSize="12sp"
+        android:textSize="18sp"
         android:textStyle="bold"
+        app:cornerRadius="20sp"
         app:icon="@drawable/like"
+        app:iconPadding="20dp"
+        app:iconSize="26sp"
+        app:iconTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bookStatusButton"
-        app:layout_constraintVertical_bias="0.184" />
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
