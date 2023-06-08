@@ -31,5 +31,8 @@
             android:name=".BookRecommendActivity"
             android:theme="@style/Theme.Material3.DayNight"
             android:exported="false" />
+        <!--  DailyTaskReceiver 등록.
+              이를 통해 어플이 실행되지 않은 상태여도 인텐트를 수신할 수 있다. -->
+        <receiver android:name=".DailyTaskReceiver"/>
     </application>
 </manifest>

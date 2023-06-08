@@ -5,11 +5,11 @@ import static android.content.ContentValues.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +20,10 @@ import android.widget.TextView;
 
 import com.devjaepal.android.todaybooks.api.APIClient;
 import com.devjaepal.android.todaybooks.api.APIInterface;
+import com.devjaepal.android.todaybooks.api.BookItem;
+import com.devjaepal.android.todaybooks.api.BookSearchResponse;
+import com.devjaepal.android.todaybooks.api.CategoryKewordUtility;
+import com.devjaepal.android.todaybooks.db.todayBookDB;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,12 +31,9 @@ import retrofit2.Response;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.devjaepal.android.todaybooks.api.BookItem;
-import com.devjaepal.android.todaybooks.api.BookSearchResponse;
-import com.devjaepal.android.todaybooks.api.CategoryKewordUtility;
-import com.devjaepal.android.todaybooks.db.todayBookDB;
 import com.google.gson.Gson;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -49,6 +50,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recommend);
+        // 이전 액티비티로부터 선택한 카테고리들을 DB 로부터 가져온다.
         List<String> selectedUserCategory = getSelectedCategoriesFromDB();
         // sharedPreferences 객체 생성
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -56,8 +58,8 @@ public class BookRecommendActivity extends AppCompatActivity {
         if(sharedPreferences.contains(RECOMMENDED_BOOK_KEY)) {
             selectedBook = getDailyRecommendedBook();
             displayBookInformation(selectedBook);
+            // 최초 실행일 경우 아래 코드가 실행된 후 SharedPreference에 저장한다.
         } else {
-            // 이전 액티비티로부터 선택한 카테고리들을 DB 로부터 가져온다.
             // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
             Random random = new Random();
             String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
@@ -81,6 +83,8 @@ public class BookRecommendActivity extends AppCompatActivity {
                 refreshBookDisplay();
             }
         });
+         /* 매일 추천 도서를 업데이트 하기 위해 작업을 예약하는 메소드 호출 */
+        scheduleDailyTask();
     }
 
     // 선택된 책 정보를 SharedPreferences에 저장한다.
@@ -216,7 +220,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     }
 
     // 새로고침 버튼 눌렀을 때 다른 책을 추천해주는 메소드
-    private void refreshBookDisplay() {
+    protected void refreshBookDisplay() {
         // 이전에 선택된 카테고리들을 가져온다.
         List<String> selectedUserCategory = getSelectedCategoriesFromDB();
         // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
@@ -224,5 +228,34 @@ public class BookRecommendActivity extends AppCompatActivity {
         String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
         // API 요청 수행 메소드
         requestBookRecommendation(selectedCategory);
+    }
+
+    /* 매일 작업을 예약하는 메소드
+    *  이 메소드를 통해 하루마다 추천할 책을 바꿔준다. */
+    private void scheduleDailyTask() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        // 작업이 실행될 시간을 자정으로 지정한다.
+        calendar.set(Calendar.HOUR_OF_DAY, 0); // 0시
+        calendar.set(Calendar.MINUTE, 0); // 0분
+        calendar.set(Calendar.SECOND, 0); // 0초
+
+        // 작업 처리할 클래스 지정(DailyTaskReceiver)
+        Intent intent = new Intent(this, DailyTaskReceiver.class);
+        // getBroadcast 메소드로 리시버 실행할 PendingIntent 가져오기
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE);
+
+        /* 작업을 예약하는 코드.
+        *  WAKEUP을 통해 맞춰둔 시간에 작업이 실행이 되어 시스템을 깨운다. */
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent);
     }
 }

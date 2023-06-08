@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/pretendard_black"
-        android:text="오늘의 추천 책"
+        android:text="오늘의 추천 책이에요 !"
         android:textColor="#000000"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
