@@ -2,8 +2,12 @@ package com.devjaepal.android.todaybooks.api;
 
 import com.google.gson.annotations.SerializedName;
 
-// 파싱해서 가져올 책에 대한 데이터 정보 담을 클래스
-public class BookItem {
+import java.io.Serializable;
+
+/* 파싱해서 가져올 책에 대한 데이터 정보 담을 클래스.
+/* Serializable 인터페이스를 상속받아서
+/ SharedPreferences를 이용해 기존 추천 책 정보를 유지하도록 한다. */
+public class BookItem implements Serializable {
         @SerializedName("image")
         private String image;
 

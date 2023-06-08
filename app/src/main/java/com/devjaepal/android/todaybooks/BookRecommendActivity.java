@@ -3,9 +3,11 @@ package com.devjaepal.android.todaybooks;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -38,17 +40,32 @@ public class BookRecommendActivity extends AppCompatActivity {
 
     private static final String MY_CLIENT_ID = "v8_2r1fSN3Zq0pmCwv_E";
     private static final String MY_CLIENT_SECRET = "FWD5ZbhFXF";
-
     private BookItem selectedBook; // 책 정보를 저장할 멤버 변수
+    // SharedPreferences를 사용하기 위한 멤버 변수
+    private static final String RECOMMENDED_BOOK_KEY = "recommended_book";
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recommend);
-
-        // 이전 액티비티로부터 선택한 카테고리들을 가져온다.
         List<String> selectedUserCategory = getSelectedCategoriesFromDB();
+        // sharedPreferences 객체 생성
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        if(sharedPreferences.contains(RECOMMENDED_BOOK_KEY)) {
+            selectedBook = getDailyRecommendedBook();
+            displayBookInformation(selectedBook);
+        } else {
+            // 이전 액티비티로부터 선택한 카테고리들을 DB 로부터 가져온다.
+            // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
+            Random random = new Random();
+            String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
+            // API 요청 수행 메소드
+            requestBookRecommendation(selectedCategory);
+        }
+
+        // 이하는 버튼 이벤트 처리 부분.
         TextView detailTextBtn = findViewById(R.id.detailTextBtn);
         detailTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,17 +81,26 @@ public class BookRecommendActivity extends AppCompatActivity {
                 refreshBookDisplay();
             }
         });
-
-        // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
-        Random random = new Random();
-        String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
-
-        // API 요청 수행 메소드
-        requestBookRecommendation(selectedCategory);
-
-
     }
 
+    // 선택된 책 정보를 SharedPreferences에 저장한다.
+    private void saveDailyRecommendedBook(BookItem bookItem) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(bookItem);
+        editor.putString(RECOMMENDED_BOOK_KEY, json);
+        editor.apply();
+    }
+
+    // 저장된 책 정보를 불러오는 메소드
+    private BookItem getDailyRecommendedBook() {
+        String json = sharedPreferences.getString(RECOMMENDED_BOOK_KEY, null);
+        if(json != null) {
+            Gson gson = new Gson();
+            return gson.fromJson(json, BookItem.class);
+        }
+        return null;
+    }
     // DB에 저장된 카테고리들을 가져오는 메소드.
     private List<String> getSelectedCategoriesFromDB() {
         todayBookDB db = new todayBookDB(this);
@@ -127,6 +153,7 @@ public class BookRecommendActivity extends AppCompatActivity {
             Random random = new Random();
             selectedBook = bookItems.get(random.nextInt(bookItems.size()));
             displayBookInformation(selectedBook);
+            saveDailyRecommendedBook(selectedBook);
         }
     }
 
