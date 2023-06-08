@@ -1,5 +1,7 @@
 package com.devjaepal.android.todaybooks;
+
 import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -20,6 +22,7 @@ import com.devjaepal.android.todaybooks.api.APIInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.devjaepal.android.todaybooks.api.BookItem;
@@ -50,7 +53,15 @@ public class BookRecommendActivity extends AppCompatActivity {
         detailTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDetail(selectedBook);
+                showBookDetailDialog(selectedBook);
+            }
+        });
+
+        Button refreshButton = findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshBookDisplay();
             }
         });
 
@@ -60,6 +71,16 @@ public class BookRecommendActivity extends AppCompatActivity {
 
         // API 요청 수행 메소드
         requestBookRecommendation(selectedCategory);
+
+
+    }
+
+    // DB에 저장된 카테고리들을 가져오는 메소드.
+    private List<String> getSelectedCategoriesFromDB() {
+        todayBookDB db = new todayBookDB(this);
+        List<String> selectedCategories = db.getAllCategories();
+        db.close();
+        return selectedCategories;
     }
 
     // 책 정보 요청해서 받아온 후, 랜덤으로 책을 추천해주는 메소드.
@@ -73,12 +94,12 @@ public class BookRecommendActivity extends AppCompatActivity {
                 "book.json",        // JSON 타입으로 API 요청.
                 keword,             // 카테고리 검색이 미지원, 따라서 내 임의대로 카테고리에 따른 검색 키워드 지정해야함.
                 "sim",              // 검색어 정확도를 기준으로 찾는다. -> date로 바꾸면 최신일자 책 검색.
-                50);               // 키워드로 검색한 책 50개 중, 하나 랜덤으로 찾아서 검색.
+                100);               // 키워드로 검색한 책 50개 중, 하나 랜덤으로 찾아서 검색.
 
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     String result = response.body();
                     // 응답 결과를 파싱해서 추천된 책을 이미지 뷰에 띄워야 함.
                     parseResponse(result);
@@ -87,6 +108,7 @@ public class BookRecommendActivity extends AppCompatActivity {
                     Log.e(TAG, "실패 : " + response.body());
                 }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e(TAG, "에러 : " + t.getMessage());
@@ -98,8 +120,8 @@ public class BookRecommendActivity extends AppCompatActivity {
     private void parseResponse(String response) {
         Gson gson = new Gson();
         BookSearchResponse bookSearchResponse = gson.fromJson(response, BookSearchResponse.class);
-        if(bookSearchResponse != null && bookSearchResponse.getItems() != null &&
-            !bookSearchResponse.getItems().isEmpty()) {
+        if (bookSearchResponse != null && bookSearchResponse.getItems() != null &&
+                !bookSearchResponse.getItems().isEmpty()) {
             List<BookItem> bookItems = bookSearchResponse.getItems();
             // 추천된 책 중 하나를 랜덤하게 선택한다.
             Random random = new Random();
@@ -122,11 +144,11 @@ public class BookRecommendActivity extends AppCompatActivity {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(bookThumbnailView);
 
-        bookTitleTextView.setText("\""+ getAPIBookTitle + "\"");
+        bookTitleTextView.setText("\"" + getAPIBookTitle + "\"");
     }
 
     // 파싱한 데이터들을 상세정보 화면에 넘겨 보여주는 메소드
-    private void showDetail(BookItem bookItem) {
+    private void showBookDetailDialog(BookItem bookItem) {
         // 다이얼로그 생성 및 레이아웃 지정
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_book_detail);
@@ -166,11 +188,14 @@ public class BookRecommendActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // DB에 저장된 카테고리들을 가져오는 메소드.
-    private List<String> getSelectedCategoriesFromDB() {
-        todayBookDB db = new todayBookDB(this);
-        List<String> selectedCategories = db.getAllCategories();
-        db.close();
-        return selectedCategories;
+    // 새로고침 버튼 눌렀을 때 다른 책을 추천해주는 메소드
+    private void refreshBookDisplay() {
+        // 이전에 선택된 카테고리들을 가져온다.
+        List<String> selectedUserCategory = getSelectedCategoriesFromDB();
+        // 유저가 선택한 카테고리 중 하나를 랜덤으로 선택한다.
+        Random random = new Random();
+        String selectedCategory = selectedUserCategory.get(random.nextInt(selectedUserCategory.size()));
+        // API 요청 수행 메소드
+        requestBookRecommendation(selectedCategory);
     }
 }
