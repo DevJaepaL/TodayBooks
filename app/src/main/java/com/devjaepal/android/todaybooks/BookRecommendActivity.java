@@ -3,12 +3,16 @@ package com.devjaepal.android.todaybooks;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +49,8 @@ public class BookRecommendActivity extends AppCompatActivity {
     // SharedPreferences를 사용하기 위한 멤버 변수
     private static final String RECOMMENDED_BOOK_KEY = "recommended_book";
     private SharedPreferences sharedPreferences;
+    // DailyTaskReceiver로부터 전달받을 BroadcastReciver 객체임.
+    private BroadcastReceiver refreshReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +73,18 @@ public class BookRecommendActivity extends AppCompatActivity {
             requestBookRecommendation(selectedCategory);
         }
 
-        // 이하는 버튼 이벤트 처리 부분.
+        // BroadcastReceiver 등록 후, REFRESH_BOOK_DISPLAY 액션 수신.
+        refreshReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                refreshBookDisplay();
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                refreshReceiver,
+                new IntentFilter("REFRESH_BOOK_DISPLAY"));
+
+        /* 이하는 버튼 이벤트 처리 부분. */
         TextView detailTextBtn = findViewById(R.id.detailTextBtn);
         detailTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +100,19 @@ public class BookRecommendActivity extends AppCompatActivity {
                 refreshBookDisplay();
             }
         });
-         /* 매일 추천 도서를 업데이트 하기 위해 작업을 예약하는 메소드 호출 */
+        // 자정에 책을 새로 받도록 예약.
         scheduleDailyTask();
+    }
+
+    /*  수신자가 제대로 등록 및 해제 되도록 onDestroy 메소드 내부에서
+    *   액티비티가 꺼지며 같이 지워준다.*/
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // BroadcastReceiver 등록 해제
+        LocalBroadcastManager
+                .getInstance(this)
+                .unregisterReceiver(refreshReceiver);
     }
 
     // 선택된 책 정보를 SharedPreferences에 저장한다.
@@ -125,7 +153,6 @@ public class BookRecommendActivity extends AppCompatActivity {
                 keword,             // 카테고리 검색이 미지원, 따라서 내 임의대로 카테고리에 따른 검색 키워드 지정해야함.
                 "sim",              // 검색어 정확도를 기준으로 찾는다. -> date로 바꾸면 최신일자 책 검색.
                 100);               // 키워드로 검색한 책 50개 중, 하나 랜덤으로 찾아서 검색.
-
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -209,7 +236,6 @@ public class BookRecommendActivity extends AppCompatActivity {
                 openBookLink(bookLink);
             }
         });
-
         dialog.show();
     }
 
