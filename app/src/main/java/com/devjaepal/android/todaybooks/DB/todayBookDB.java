@@ -1,4 +1,4 @@
-package com.devjaepal.android.todaybooks.db;
+package com.devjaepal.android.todaybooks.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.devjaepal.android.todaybooks.api.BookItem;
+import com.devjaepal.android.todaybooks.API.BookItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,29 +93,47 @@ public class todayBookDB extends SQLiteOpenHelper {
         db.close();
     }
 
-    // 좋아요한 모든 책들을 조회하는 메소드
+    // 좋아요한 모든 책들을 조회하는 메소드. do-while문을 통해 모든 DB 레코드들을 순회한 후 리턴한다.
     public List<BookItem> getAllLikedBooks() {
         List<BookItem> likedBooks = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedBooks", null);
         if(cursor.moveToFirst()) {
-            // 컬럼 인덱스 번호에 따라 추출해 Book 객체를 생성해준다.
-            int bookId = cursor.getInt(0);
-            String title = cursor.getString(1);
-            String author = cursor.getString(2);
-            String descript = cursor.getString(3);
-            String imageUrl = cursor.getString(4);
-            BookItem book = new BookItem();
-            book.setImageUrl(imageUrl);
-            book.setTitle(title);
-            book.setAuthor(author);
-            book.setDescription(descript);
-            likedBooks.add(book);
+            do{
+                // 컬럼 인덱스 번호에 따라 추출해 Book 객체를 생성해준다.
+                int bookId = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String author = cursor.getString(2);
+                String descript = cursor.getString(3);
+                String imageUrl = cursor.getString(4);
+                BookItem book = new BookItem();
+                book.setImageUrl(imageUrl);
+                book.setTitle(title);
+                book.setAuthor(author);
+                book.setDescription(descript);
+                likedBooks.add(book);
+            } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
 
         return likedBooks;
+    }
+
+    // 이미 좋아요를 누른 책인지 체크하는 메소드
+    public boolean isBookAlreadyLiked(String likeBookTitle) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM LikedBooks WHERE book_title = ?",
+                                    new String[]{likeBookTitle});
+
+        int bookColumnPrimaryKeyCount = 0;
+        if(cursor.moveToFirst()) {
+            bookColumnPrimaryKeyCount = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+
+        return bookColumnPrimaryKeyCount > 0;
     }
 
     // UserCategories에 데이터가 존재한 지 확인하는 메소드

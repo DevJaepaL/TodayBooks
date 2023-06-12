@@ -1,12 +1,10 @@
-package com.devjaepal.android.todaybooks;
+package com.devjaepal.android.todaybooks.TaskReceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.devjaepal.android.todaybooks.BookRecommendActivity;
 
 // BroadcastReceiver를 상속받은 클래스이다.
 // 이 클래스를 통해 매일 작업을 트리거한다.

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookRecommendActivity">
+    tools:context=".Activity.BookRecommendActivity">
     <!--  책 표지 이미지 뷰  -->
     <!-- 책 이름 텍스트 뷰  -->
 
@@ -65,6 +65,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/NaverBookImage" />
 
+    <!--  새로고침 버튼  -->
     <Button
         android:id="@+id/likeButton"
         style="@style/Widget.Material3.Button.Icon"
@@ -92,7 +93,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detailTextBtn" />
-    <!--  새로고침 버튼  -->
+
     <Button
         android:id="@+id/refreshButton"
         style="@style/Widget.Material3.Button.IconButton"
@@ -113,5 +114,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_gravity="bottom"
+        android:background="#454545"
+        app:itemBackground="@android:color/white"
+        app:itemIconTint="@drawable/menu_item_color"
+        app:itemTextColor="@drawable/menu_item_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/btm_navi_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

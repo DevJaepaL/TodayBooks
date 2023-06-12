@@ -1,4 +1,4 @@
-package com.devjaepal.android.todaybooks.api;
+package com.devjaepal.android.todaybooks.API;
 
 import java.util.ArrayList;
 import java.util.Arrays;

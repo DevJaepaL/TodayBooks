@@ -1,4 +1,4 @@
-package com.devjaepal.android.todaybooks.api;
+package com.devjaepal.android.todaybooks.API;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

@@ -1,7 +1,8 @@
-package com.devjaepal.android.todaybooks;
+package com.devjaepal.android.todaybooks.Activity;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -17,17 +18,20 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.devjaepal.android.todaybooks.api.APIClient;
-import com.devjaepal.android.todaybooks.api.APIInterface;
-import com.devjaepal.android.todaybooks.api.BookItem;
-import com.devjaepal.android.todaybooks.api.BookSearchResponse;
-import com.devjaepal.android.todaybooks.api.CategoryKewordUtility;
-import com.devjaepal.android.todaybooks.db.todayBookDB;
+import com.devjaepal.android.todaybooks.API.APIClient;
+import com.devjaepal.android.todaybooks.API.APIInterface;
+import com.devjaepal.android.todaybooks.API.BookItem;
+import com.devjaepal.android.todaybooks.API.BookSearchResponse;
+import com.devjaepal.android.todaybooks.API.CategoryKewordUtility;
+import com.devjaepal.android.todaybooks.DB.todayBookDB;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +39,10 @@ import retrofit2.Response;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.devjaepal.android.todaybooks.TaskReceiver.DailyTaskReceiver;
+import com.devjaepal.android.todaybooks.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
@@ -51,11 +59,37 @@ public class BookRecommendActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     // DailyTaskReceiver로부터 전달받을 BroadcastReciver 객체임.
     private BroadcastReceiver refreshReceiver;
+    private final todayBookDB db = new todayBookDB(this);
+
+    public static final int TAB_HOME = R.id.tab_home;
+    public static final int TAB_LIKE_BOOKS = R.id.tab_likeBooks;
+    public static final int USER_SETTING = R.id.userSetting;
+
+    // 하단 네비게이션 바 멤버 번수
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE); // 상단 타이틀 바 없애는 코드
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recommend);
+
+        /* Navigation Bar 파트 */
+        bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == TAB_HOME) {
+                    return true;
+                } else // 마이페이지로 이동하는 코드 작성
+                    if (itemId == TAB_LIKE_BOOKS) {
+                    startActivity(new Intent(BookRecommendActivity.this, LikeBooksListActivity.class));
+                    return true;
+                } else return itemId == USER_SETTING;
+            }
+        });
+
         // 이전 액티비티로부터 선택한 카테고리들을 DB 로부터 가져온다.
         List<String> selectedUserCategory = getSelectedCategoriesFromDB();
         // sharedPreferences 객체 생성
@@ -93,6 +127,14 @@ public class BookRecommendActivity extends AppCompatActivity {
             }
         });
 
+        Button likeButton = findViewById(R.id.likeButton);
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLikeButtonClick(selectedBook);
+            }
+        });
+
         Button refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +151,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        db.close(); // DB 연결 해제하여 메모리 누수 방지
         // BroadcastReceiver 등록 해제
         LocalBroadcastManager
                 .getInstance(this)
@@ -139,6 +182,33 @@ public class BookRecommendActivity extends AppCompatActivity {
         List<String> selectedCategories = db.getAllCategories();
         db.close();
         return selectedCategories;
+    }
+
+
+    // 책이 이미 좋아요한 책인지 체크한 후 중복된 책이 안보이도록 해주는 메소드이다.
+    private boolean checkBookAlreadyLiked(BookItem bookItem) {
+        String likedBookTitle = bookItem.getTitle();
+        return db.isBookAlreadyLiked(likedBookTitle);
+    }
+
+    /* 좋아요 버튼을 누를 경우 호출되는 메소드.
+     *  만약 이미 좋아요를 한 책일 경우 중복값이 들어갈 수 없도록 처리 한다. */
+    public void onLikeButtonClick(BookItem book) {
+        if(checkBookAlreadyLiked(book)) {
+            Toast.makeText(this, "이미 좋아요를 누른 책이에요 !", Toast.LENGTH_SHORT).show();
+        } else {
+            addLikedBook(selectedBook);
+            Toast.makeText(BookRecommendActivity.this,
+                    "좋아하는 책이 추가됐어요 !",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // DB에 좋아한 책을 추가하는 메소드
+    private void addLikedBook(BookItem book) {
+        todayBookDB db = new todayBookDB(this);
+        db.addLikedBook(book);
+        db.close();
     }
 
     // 책 정보 요청해서 받아온 후, 랜덤으로 책을 추천해주는 메소드.

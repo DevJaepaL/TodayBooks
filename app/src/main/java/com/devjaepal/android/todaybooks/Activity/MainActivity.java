@@ -1,20 +1,22 @@
-package com.devjaepal.android.todaybooks;
+package com.devjaepal.android.todaybooks.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.devjaepal.android.todaybooks.db.todayBookDB;
+import com.devjaepal.android.todaybooks.DB.todayBookDB;
+import com.devjaepal.android.todaybooks.R;
 
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         todayBookDB db = new todayBookDB(this);
         boolean hasUserCategories = db.hasCategories();

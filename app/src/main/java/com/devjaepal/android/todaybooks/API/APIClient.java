@@ -1,4 +1,4 @@
-package com.devjaepal.android.todaybooks.api;
+package com.devjaepal.android.todaybooks.API;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
