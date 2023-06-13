@@ -15,7 +15,7 @@ import java.util.List;
 public class todayBookDB extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "todaybooks.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
 
     /*  UserCategories 테이블 생성 쿼리
         유저가 선택한 카테고리를 저장하는 테이블 */
@@ -30,8 +30,10 @@ public class todayBookDB extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS LikedBooks (" +
                     "book_title TEXT PRIMARY KEY, " +
                     "book_author TEXT, " +
+                    "book_publisher TEXT, " +
                     "book_description TEXT, " +
                     "book_image_url TEXT, " +
+                    "book_link TEXT, " +
                     "book_memo TEXT)";
 
     public todayBookDB(Context context) {
@@ -89,8 +91,10 @@ public class todayBookDB extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("book_title", book.getTitle());
         values.put("book_author", book.getAuthor());
+        values.put("book_publisher", book.getPublisher());
         values.put("book_description", book.getDescription());
         values.put("book_image_url", book.getImageUrl());
+        values.put("book_link", book.getLink());
         db.insert("LikedBooks", null, values);
         db.close();
     }
@@ -105,14 +109,18 @@ public class todayBookDB extends SQLiteOpenHelper {
                 // 컬럼 인덱스 번호에 따라 추출해 Book 객체를 생성해준다.
                 String title = cursor.getString(0);
                 String author = cursor.getString(1);
-                String descript = cursor.getString(2);
-                String imageUrl = cursor.getString(3);
-                BookItem book = new BookItem();
-                book.setImageUrl(imageUrl);
-                book.setTitle(title);
-                book.setAuthor(author);
-                book.setDescription(descript);
-                likedBooks.add(book);
+                String publisher = cursor.getString(2);
+                String description = cursor.getString(3);
+                String imageUrl = cursor.getString(4);
+                String link = cursor.getString(5);
+                BookItem likeBook = new BookItem();
+                likeBook.setTitle(title);
+                likeBook.setAuthor(author);
+                likeBook.setPublisher(publisher);
+                likeBook.setDescription(description);
+                likeBook.setImageUrl(imageUrl);
+                likeBook.setLink(link);
+                likedBooks.add(likeBook);
             } while (cursor.moveToNext());
         }
         cursor.close();

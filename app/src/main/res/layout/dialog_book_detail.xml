@@ -12,6 +12,14 @@
         android:fontFamily="@font/pretendard_black"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
+    <!--  구분선  -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#4D000000" />
+
     <TextView
         android:id="@+id/dialogBookAuthor"
         android:fontFamily="@font/pretendard_regular"
@@ -23,13 +31,6 @@
         android:fontFamily="@font/pretendard_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <!--  구분선  -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="5dp"
-        android:background="#4D000000" />
 
     <TextView
         android:id="@+id/dialogBookDescription"

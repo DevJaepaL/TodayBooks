@@ -92,6 +92,7 @@ public class LikeBooksListAdapter extends RecyclerView.Adapter<LikeBooksListAdap
         void onBookDelete(int position, BookItem bookItem);
 
         void onBookMemo(int position, BookItem bookItem);
+        void showLikeBooksDetailDialog(BookItem bookItem);
     }
 
     private String getLikeBookUserMemo(String bookTitle) {
@@ -102,7 +103,7 @@ public class LikeBooksListAdapter extends RecyclerView.Adapter<LikeBooksListAdap
     private void showBookSettingDialog(int position, BookItem bookItem) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("좋아하는 책 설정")
-                .setItems(new CharSequence[]{"메모 하기", "좋아하는 목록에서 지우기"},
+                .setItems(new CharSequence[]{"메모 하기", "책 상세보기" , "좋아하는 목록에서 지우기"},
                         new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -112,7 +113,12 @@ public class LikeBooksListAdapter extends RecyclerView.Adapter<LikeBooksListAdap
                                     bookItemListener.onBookMemo(position, bookItem);
                                 }
                                 break;
-                            case 1: // 목록에서 삭제 기능
+                            case 1: // 책 상세보기 기능
+                                if(bookItemListener != null) {
+                                    bookItemListener.showLikeBooksDetailDialog(bookItem);
+                                }
+                                break;
+                            case 2: // 목록에서 삭제 기능
                                 if(bookItemListener != null) {
                                     bookItemListener.onBookDelete(position, bookItem);
                                 }

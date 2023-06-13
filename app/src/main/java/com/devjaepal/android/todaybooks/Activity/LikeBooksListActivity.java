@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -153,5 +154,32 @@ public class LikeBooksListActivity extends AppCompatActivity implements LikeBook
         });
         // 다이얼로그를 표시한다.
         builder.show();
+    }
+
+    @Override
+    public void showLikeBooksDetailDialog(BookItem bookItem) {
+        // 다이얼로그 생성 및 레이아웃 지정
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_book_detail);
+        // 다이얼로그 내부에 있는 아이디 가져옴.
+        TextView bookTitleTextView = dialog.findViewById(R.id.dialogBookTitle);
+        TextView bookAuthorTextView = dialog.findViewById(R.id.dialogBookAuthor);
+        TextView bookPublisherTextView = dialog.findViewById(R.id.dialogBookPublisher);
+        TextView bookDescriptionTextView = dialog.findViewById(R.id.dialogBookDescription);
+        TextView bookLinkTextView = dialog.findViewById(R.id.dialogBookLink);
+
+        // 파싱 데이터들을 다이얼로그 내부에 지정함.
+        String bookTitle = bookItem.getTitle();
+        String bookAuthor = bookItem.getAuthor();
+        String bookPublisher = bookItem.getPublisher();
+        String bookDescription = bookItem.getDescription();
+        String bookLink = bookItem.getLink();
+
+        bookTitleTextView.setText(bookTitle);
+        bookAuthorTextView.setText("저자 : " + bookAuthor);
+        bookPublisherTextView.setText("출판사 : " + bookPublisher);
+        bookDescriptionTextView.setText(bookDescription);
+        bookLinkTextView.setText(bookLink);
+        dialog.show();
     }
 }
