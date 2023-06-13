@@ -119,7 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_gravity="bottom"
-        android:background="#454545"
+        android:background="#00C853"
         app:itemBackground="@android:color/white"
         app:itemIconTint="@drawable/menu_item_color"
         app:itemTextColor="@drawable/menu_item_color"

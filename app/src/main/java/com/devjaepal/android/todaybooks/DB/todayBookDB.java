@@ -15,7 +15,7 @@ import java.util.List;
 public class todayBookDB extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "todaybooks.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 4;
 
     /*  UserCategories 테이블 생성 쿼리
         유저가 선택한 카테고리를 저장하는 테이블 */
@@ -28,11 +28,11 @@ public class todayBookDB extends SQLiteOpenHelper {
      *   유저가 좋아요한 책들을 저장하는 테이블(메모,별점 기능 있음) */
     private static final String CREATE_LIKED_BOOKS_TABLE =
             "CREATE TABLE IF NOT EXISTS LikedBooks (" +
-                    "book_id INTEGER PRIMARY KEY, " +
-                    "book_title TEXT, " +
+                    "book_title TEXT PRIMARY KEY, " +
                     "book_author TEXT, " +
                     "book_description TEXT, " +
-                    "book_image_url TEXT);";
+                    "book_image_url TEXT, " +
+                    "book_memo TEXT)";
 
     public todayBookDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -48,8 +48,10 @@ public class todayBookDB extends SQLiteOpenHelper {
     // DB가 업그레이드 될 경우 사용할 메소드
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS UserCagegories");
-        db.execSQL("DROP TABLE IF EXISTS LikedBooks");
+        if (oldVersion < 3) {
+            db.execSQL("DROP TABLE IF EXISTS UserCagegories");
+            db.execSQL("DROP TABLE IF EXISTS LikedBooks");
+        }
         // 새로운 테이블 생성
         onCreate(db);
     }
@@ -60,7 +62,7 @@ public class todayBookDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("category_name", categoryName);
-        db.insert("UserCategories",null,values);
+        db.insert("UserCategories", null, values);
         db.close();
     }
 
@@ -69,8 +71,8 @@ public class todayBookDB extends SQLiteOpenHelper {
         List<String> categories = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT category_name" +
-                                         " FROM UserCategories", null);
-        if(cursor.moveToFirst()) {
+                " FROM UserCategories", null);
+        if (cursor.moveToFirst()) {
             do {
                 String category = cursor.getString(0);
                 categories.add(category);
@@ -98,14 +100,13 @@ public class todayBookDB extends SQLiteOpenHelper {
         List<BookItem> likedBooks = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedBooks", null);
-        if(cursor.moveToFirst()) {
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 // 컬럼 인덱스 번호에 따라 추출해 Book 객체를 생성해준다.
-                int bookId = cursor.getInt(0);
-                String title = cursor.getString(1);
-                String author = cursor.getString(2);
-                String descript = cursor.getString(3);
-                String imageUrl = cursor.getString(4);
+                String title = cursor.getString(0);
+                String author = cursor.getString(1);
+                String descript = cursor.getString(2);
+                String imageUrl = cursor.getString(3);
                 BookItem book = new BookItem();
                 book.setImageUrl(imageUrl);
                 book.setTitle(title);
@@ -124,10 +125,10 @@ public class todayBookDB extends SQLiteOpenHelper {
     public boolean isBookAlreadyLiked(String likeBookTitle) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM LikedBooks WHERE book_title = ?",
-                                    new String[]{likeBookTitle});
+                new String[]{likeBookTitle});
 
         int bookColumnPrimaryKeyCount = 0;
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             bookColumnPrimaryKeyCount = cursor.getInt(0);
         }
         cursor.close();
@@ -141,7 +142,7 @@ public class todayBookDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM UserCategories", null);
         int cnt = 0;
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             cnt = cursor.getInt(0); // 테이블에 값 있는지 확인.
         }
 
@@ -150,27 +151,48 @@ public class todayBookDB extends SQLiteOpenHelper {
         return cnt > 0; // 0 = false , 그 이상은 값이 있기 때문에 true로 cnt값 그대로 반환.
     }
 
-    // 특정 책에 대한 메모 및 평점 업데이트 메소드
-    public void updateBookMemoAndRating(int bookId, String memo, float rating) {
+    // 특정 책에 대한 사용자가 작성한 메모 저장 메소드
+    public void saveLikeBookMemo(String bookTitle, String memo) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("book_memo", memo);
-        values.put("book_rating", rating);
         db.update(
                 "LikedBooks",
                 values,
-                "book_id=?",
-                new String[]{String.valueOf(bookId)});
+                "book_title=?",
+                new String[]{bookTitle});
         db.close();
     }
 
+    // 메모를 다른 곳에서 불러오기 위한 메소드(READ)
+    public String getLikeBookUserMemo(String bookTitle) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String userMemo = "";
+
+        Cursor cursor = db.query(
+                "LikedBooks",
+                new String[]{"book_memo"},
+                "book_title = ?",
+                new String[]{bookTitle},
+                null,
+                null,
+                null);
+        int memoColumnIndex = cursor.getColumnIndex("book_memo");
+        if(memoColumnIndex != -1 && cursor.moveToFirst()) {
+            userMemo = cursor.getString(memoColumnIndex);
+        }
+        cursor.close();
+        db.close();
+        return userMemo;
+    }
+
     // 좋아요를 누른 책 삭제하는 메소드
-    public void deleteLikedBook(int bookId) {
+    public void deleteLikedBook(String bookTitle) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(
                 "LikedBooks",
-                "book_id=?",
-                new String[]{String.valueOf(bookId)}
+                "book_title=?",
+                new String[]{bookTitle}
         );
         db.close();
     }

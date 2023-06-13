@@ -1,32 +1,59 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="14dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
-    android:id="@+id/cardView">
+    app:cardElevation="4dp">
 
     <LinearLayout
-        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/bookImageView"
-            android:layout_width="60dp"
-            android:layout_height="80dp"
+            android:layout_width="80dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:layout_gravity="center_vertical"
-            android:id="@+id/titleTextView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_bold"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:fontFamily="@font/pretendard_bold"
+                android:textAlignment="textStart"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#33000000" />
+
+            <TextView
+                android:id="@+id/userBookMemoTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:textAlignment="textStart"
+                android:textSize="12sp"></TextView>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.devjaepal.android.todaybooks.Activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -16,8 +17,6 @@ public class MainActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         todayBookDB db = new todayBookDB(this);
         boolean hasUserCategories = db.hasCategories();
         db.close();

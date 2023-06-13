@@ -90,12 +90,14 @@ public class BookCategoriesActivity extends AppCompatActivity {
         }
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(BookCategoriesActivity.this)
-                .setTitle("선택한 항목")
+                .setTitle("선택한 항목이에요!")
                 .setMessage(messageBuilder.toString())
+                .setNegativeButton("다시 정할래요.", null)
                 .setPositiveButton("확 인", ((dialog, which) -> {
                     // 확인 버튼 눌렀을 때 다음 액티비티로 넘어간다.
                     openBookRecommendActivity(selectedCategories);
                 }));
+
 
         AlertDialog dialog = alertBuilder.create();
         dialog.show();

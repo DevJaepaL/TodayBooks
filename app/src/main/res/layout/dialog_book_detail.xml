@@ -9,29 +9,58 @@
         android:id="@+id/dialogBookTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        android:fontFamily="@font/pretendard_black"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
         android:id="@+id/dialogBookAuthor"
+        android:fontFamily="@font/pretendard_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/dialogBookPublisher"
+        android:fontFamily="@font/pretendard_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/dialogBookDescription"
+    <!--  구분선  -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_height="1dp"
+        android:layout_margin="5dp"
+        android:background="#4D000000" />
 
     <TextView
-        android:id="@+id/dialogBookLink"
+        android:id="@+id/dialogBookDescription"
+        android:fontFamily="@font/pretendard_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="5dp"
+        android:layout_marginTop="16dp" />
+
+    <!--  구분선  -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp"
+        android:background="#4D000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:text="구매 링크" />
+
+    <TextView
+        android:textSize="10sp"
+        android:id="@+id/dialogBookLink"
+        android:fontFamily="@font/pretendard_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:textColor="#7ACE5D"
         android:textStyle="bold"
         android:clickable="true"

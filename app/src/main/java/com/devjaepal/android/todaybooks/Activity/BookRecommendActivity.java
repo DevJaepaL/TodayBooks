@@ -82,11 +82,14 @@ public class BookRecommendActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == TAB_HOME) {
                     return true;
-                } else // 마이페이지로 이동하는 코드 작성
-                    if (itemId == TAB_LIKE_BOOKS) {
+                } else if (itemId == TAB_LIKE_BOOKS) { // 마이페이지로 이동하는 코드 작성
+                    item.setChecked(true);
                     startActivity(new Intent(BookRecommendActivity.this, LikeBooksListActivity.class));
                     return true;
-                } else return itemId == USER_SETTING;
+                } else if(itemId == USER_SETTING) {
+                    item.setChecked(true);
+                    return true;
+                } return false;
             }
         });
 
@@ -294,11 +297,11 @@ public class BookRecommendActivity extends AppCompatActivity {
         String bookDescription = bookItem.getDescription();
         String bookLink = bookItem.getLink();
 
-        bookTitleTextView.setText(bookTitle + "\n");
+        bookTitleTextView.setText(bookTitle);
         bookAuthorTextView.setText("저자 : " + bookAuthor);
         bookPublisherTextView.setText("출판사 : " + bookPublisher);
         bookDescriptionTextView.setText(bookDescription);
-        bookLinkTextView.setText("도서 구매 링크 : \n" + bookLink);
+        bookLinkTextView.setText(bookLink);
 
         bookLinkTextView.setOnClickListener(new View.OnClickListener() {
             @Override

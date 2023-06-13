@@ -8,48 +8,48 @@ import java.io.Serializable;
 /* Serializable 인터페이스를 상속받아서
 / SharedPreferences를 이용해 기존 추천 책 정보를 유지하도록 한다. */
 public class BookItem implements Serializable {
-        @SerializedName("image")
-        private String image;
 
-        @SerializedName("title")
-        private String title;
+    @SerializedName("image")
+    private String image;
 
-        @SerializedName("link")
-        private String link;
+    @SerializedName("title")
+    private String title;
 
-        @SerializedName("author")
-        private String author;
+    @SerializedName("link")
+    private String link;
 
-        @SerializedName("publisher")
-        private String publisher;
+    @SerializedName("author")
+    private String author;
 
-        @SerializedName("description")
-        private String description;
+    @SerializedName("publisher")
+    private String publisher;
 
+    @SerializedName("description")
+    private String description;
 
     public String getImageUrl() {
-            return image;
-        }
+        return image;
+    }
 
-        public String getTitle() {
-            return title;
-        }
+    public String getTitle() {
+        return title;
+    }
 
-        public String getLink() {
-            return link;
-        }
+    public String getLink() {
+        return link;
+    }
 
-        public String getAuthor() {
-            return author;
-        }
+    public String getAuthor() {
+        return author;
+    }
 
-        public String getPublisher() {
-            return publisher;
-        }
+    public String getPublisher() {
+        return publisher;
+    }
 
-        public String getDescription() {
-            return description;
-        }
+    public String getDescription() {
+        return description;
+    }
 
     public void setImageUrl(String imageUrl) {
         this.image = imageUrl;
