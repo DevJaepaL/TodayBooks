@@ -28,10 +28,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="20dp"
-        android:fontFamily="@font/pretendard_regular"
+        android:fontFamily="@font/pretendard_bold"
         android:lineSpacingExtra="0.5dp"
         android:textAlignment="center"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/NaverBookImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
@@ -59,7 +59,7 @@
         android:fontFamily="@font/pretendard_black"
         android:text="책 정보 상세보기"
         android:textColor="#000000"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/likeButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="160dp"
         android:layout_height="70dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="90dp"
         android:backgroundTint="#82B1FF"
         android:fontFamily="@font/pretendard_bold"
         android:onClick="refreshBook"
@@ -128,5 +128,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/btm_navi_menu" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/selectCategoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="88dp"
+        android:clickable="true"
+        app:backgroundTint="#B2F280"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/book_menu_icon"
+        app:tint="#FFFFFF" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

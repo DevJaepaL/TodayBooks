@@ -3,6 +3,7 @@ package com.devjaepal.android.todaybooks.Activity;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -42,9 +44,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.devjaepal.android.todaybooks.TaskReceiver.DailyTaskReceiver;
 import com.devjaepal.android.todaybooks.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -122,6 +126,7 @@ public class BookRecommendActivity extends AppCompatActivity {
                 new IntentFilter("REFRESH_BOOK_DISPLAY"));
 
         /* 이하는 버튼 이벤트 처리 부분. */
+        /* 책 상세보기 버튼 */
         TextView detailTextBtn = findViewById(R.id.detailTextBtn);
         detailTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +135,7 @@ public class BookRecommendActivity extends AppCompatActivity {
             }
         });
 
+        /* 좋아요 버튼(DB에 들어가서 좋아요한 책 리스트에 보일 수 있도록 한다.) */
         Button likeButton = findViewById(R.id.likeButton);
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +144,7 @@ public class BookRecommendActivity extends AppCompatActivity {
             }
         });
 
+        /* 새로고침 버튼(책을 새로 추천 해주는 버튼이다.) */
         Button refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +152,15 @@ public class BookRecommendActivity extends AppCompatActivity {
                 refreshBookDisplay();
             }
         });
+
+        FloatingActionButton selectUserCategoryButton = findViewById(R.id.selectCategoryButton);
+        selectUserCategoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSelectCategoryDialog();
+            }
+        });
+
         // 자정에 책을 새로 받도록 예약.
         scheduleDailyTask();
     }
@@ -161,7 +177,7 @@ public class BookRecommendActivity extends AppCompatActivity {
                 .unregisterReceiver(refreshReceiver);
     }
 
-    // 선택된 책 정보를 SharedPreferences에 저장한다.
+    // 선택된 오늘의 책 정보를 SharedPreferences에 저장한다.
     private void saveDailyRecommendedBook(BookItem bookItem) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -205,6 +221,34 @@ public class BookRecommendActivity extends AppCompatActivity {
                     "좋아하는 책이 추가됐어요 !",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void saveSelectedCategoriesDB(List<String> selectedCategories) {
+        todayBookDB db = new todayBookDB(this);
+        for(String category : selectedCategories) {
+            db.addUserCategory(category);
+        }
+        db.close();
+    }
+
+    private void showSelectCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] bookCategories = {
+                "소설", "시/에세이", "컴퓨터/IT",
+                "만화", "잡지", "국어/외국어", "여행", "가정/요리",
+                "어린이", "유아", "종교", "예술/대중문화",
+                "자연/과학", "사회 / 정치", "역사", "자기계발",
+                "경제 / 경영"};
+
+        builder.setTitle("책 카테고리 선택");
+        builder.setItems(bookCategories, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                String userSelected = bookCategories[which];
+                saveSelectedCategoriesDB(Arrays.asList(bookCategories));
+            }
+        });
+        builder.show();
     }
 
     // DB에 좋아한 책을 추가하는 메소드
