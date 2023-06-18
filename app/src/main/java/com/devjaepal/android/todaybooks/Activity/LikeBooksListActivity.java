@@ -64,6 +64,7 @@ public class LikeBooksListActivity extends AppCompatActivity implements LikeBook
                     item.setChecked(true);
                     return true;
                 } else if (itemId == USER_SETTING) {
+                    showNoUIToastMessage("현재 미구현된 기능 입니다.");
                     return true;
                 }
                 return false;
@@ -181,5 +182,10 @@ public class LikeBooksListActivity extends AppCompatActivity implements LikeBook
         bookDescriptionTextView.setText(bookDescription);
         bookLinkTextView.setText(bookLink);
         dialog.show();
+    }
+
+    // 토스트 메시지 표시 메소드
+    private void showNoUIToastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

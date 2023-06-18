@@ -39,14 +39,19 @@
         app:layout_constraintTop_toBottomOf="@+id/showMainText"
         app:layout_constraintVertical_bias="0.0" />
 
+    <!--  새로고침 버튼  -->
+
     <ImageView
         android:id="@+id/NaverBookImage"
         android:layout_width="250dp"
-        android:layout_height="300dp"
+        android:layout_height="280dp"
+        android:layout_margin="30dp"
         android:adjustViewBounds="true"
+        android:background="@drawable/rounded_corner"
+        android:elevation="30dp"
         app:layout_constraintBottom_toTopOf="@id/detailTextBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookTitleText" />
 
@@ -65,28 +70,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/NaverBookImage" />
 
-    <!--  새로고침 버튼  -->
     <Button
         android:id="@+id/likeButton"
         style="@style/Widget.Material3.Button.Icon"
         android:layout_width="200dp"
         android:layout_height="80dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="#7ACE5D"
-        android:fontFamily="@font/pretendard_bold"
-        android:shadowColor="#000000"
-        android:shadowDx="5"
-        android:shadowDy="5"
-        android:shadowRadius="5"
-        android:text="읽고 싶어요"
+        android:backgroundTint="#009EFF"
+        android:fontFamily="@font/pretendard_regular"
+        android:text="읽고 싶어요!"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:cornerRadius="20sp"
-        app:icon="@drawable/like"
+        app:icon="@drawable/heart"
         app:iconPadding="20dp"
-        app:iconSize="26sp"
+        app:iconSize="22dp"
         app:iconTint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/refreshButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
         android:backgroundTint="#82B1FF"
         android:fontFamily="@font/pretendard_bold"
         android:onClick="refreshBook"
-        android:text="다른 책 추천 받기!"
+        android:text="다른 책 추천 받기"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
@@ -119,8 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_gravity="bottom"
-        android:background="#00C853"
-        app:itemBackground="@android:color/white"
+        android:background="#000000"
         app:itemIconTint="@drawable/menu_item_color"
         app:itemTextColor="@drawable/menu_item_color"
         app:labelVisibilityMode="labeled"
@@ -133,13 +132,15 @@
         android:id="@+id/selectCategoryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="88dp"
         android:clickable="true"
-        app:backgroundTint="#B2F280"
+        app:backgroundTint="#046A2E"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/refreshButton"
         app:srcCompat="@drawable/book_menu_icon"
         app:tint="#FFFFFF" />
 

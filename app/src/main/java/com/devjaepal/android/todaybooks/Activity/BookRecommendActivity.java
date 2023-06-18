@@ -48,6 +48,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -90,10 +91,12 @@ public class BookRecommendActivity extends AppCompatActivity {
                     item.setChecked(true);
                     startActivity(new Intent(BookRecommendActivity.this, LikeBooksListActivity.class));
                     return true;
-                } else if(itemId == USER_SETTING) {
+                } else if (itemId == USER_SETTING) {
                     item.setChecked(true);
+                    showNoUIToastMessage("현재 미구현된 기능 입니다.");
                     return true;
-                } return false;
+                }
+                return false;
             }
         });
 
@@ -102,7 +105,7 @@ public class BookRecommendActivity extends AppCompatActivity {
         // sharedPreferences 객체 생성
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if(sharedPreferences.contains(RECOMMENDED_BOOK_KEY)) {
+        if (sharedPreferences.contains(RECOMMENDED_BOOK_KEY)) {
             selectedBook = getDailyRecommendedBook();
             displayBookInformation(selectedBook);
             // 최초 실행일 경우 아래 코드가 실행된 후 SharedPreference에 저장한다.
@@ -166,7 +169,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     }
 
     /*  수신자가 제대로 등록 및 해제 되도록 onDestroy 메소드 내부에서
-    *   액티비티가 꺼지며 같이 지워준다.*/
+     *   액티비티가 꺼지며 같이 지워준다.*/
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -189,18 +192,11 @@ public class BookRecommendActivity extends AppCompatActivity {
     // 저장된 책 정보를 불러오는 메소드
     private BookItem getDailyRecommendedBook() {
         String json = sharedPreferences.getString(RECOMMENDED_BOOK_KEY, null);
-        if(json != null) {
+        if (json != null) {
             Gson gson = new Gson();
             return gson.fromJson(json, BookItem.class);
         }
         return null;
-    }
-    // DB에 저장된 카테고리들을 가져오는 메소드.
-    private List<String> getSelectedCategoriesFromDB() {
-        todayBookDB db = new todayBookDB(this);
-        List<String> selectedCategories = db.getAllCategories();
-        db.close();
-        return selectedCategories;
     }
 
 
@@ -213,7 +209,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     /* 좋아요 버튼을 누를 경우 호출되는 메소드.
      *  만약 이미 좋아요를 한 책일 경우 중복값이 들어갈 수 없도록 처리 한다. */
     public void onLikeButtonClick(BookItem book) {
-        if(checkBookAlreadyLiked(book)) {
+        if (checkBookAlreadyLiked(book)) {
             Toast.makeText(this, "이미 좋아요를 누른 책이에요 !", Toast.LENGTH_SHORT).show();
         } else {
             addLikedBook(selectedBook);
@@ -223,12 +219,24 @@ public class BookRecommendActivity extends AppCompatActivity {
         }
     }
 
+    // DB에 저장된 카테고리들을 가져오는 메소드.
+    private List<String> getSelectedCategoriesFromDB() {
+        todayBookDB db = new todayBookDB(this);
+        List<String> selectedCategories = db.getAllCategories();
+        db.close();
+        return selectedCategories;
+    }
+
     private void saveSelectedCategoriesDB(List<String> selectedCategories) {
         todayBookDB db = new todayBookDB(this);
-        for(String category : selectedCategories) {
+        // 유저기 기존에 선택한 카테고리 삭제
+        db.deleteUserCategories();
+
+        for (String category : selectedCategories) {
             db.addUserCategory(category);
         }
         db.close();
+        Toast.makeText(this, "카테고리가 업데이트 됐어요.", Toast.LENGTH_SHORT).show();
     }
 
     private void showSelectCategoryDialog() {
@@ -240,15 +248,58 @@ public class BookRecommendActivity extends AppCompatActivity {
                 "자연/과학", "사회 / 정치", "역사", "자기계발",
                 "경제 / 경영"};
 
-        builder.setTitle("책 카테고리 선택");
-        builder.setItems(bookCategories, new DialogInterface.OnClickListener() {
+        boolean[] checkedItems = new boolean[bookCategories.length];
+
+        // 기존에 선택한 카테고리 정보 가져오기
+        List<String> previousSelectedCategories = getSelectedCategoriesFromDB(); // 이 부분은 기존에 사용하던 데이터베이스나 SharedPreferences 등을 사용하여 이전에 선택한 카테고리 정보를 가져오는 코드입니다.
+
+        // 기존에 선택한 카테고리에 대해 checkedItems 배열 업데이트
+        for (int i = 0; i < bookCategories.length; i++) {
+            if (previousSelectedCategories.contains(bookCategories[i])) {
+                checkedItems[i] = true;
+            }
+        }
+
+        builder.setTitle("책 카테고리 재선택");
+
+        // 카테고리 선택 부분 UI 생성
+        builder.setMultiChoiceItems(bookCategories, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                String userSelected = bookCategories[which];
-                saveSelectedCategoriesDB(Arrays.asList(bookCategories));
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                checkedItems[which] = isChecked;
             }
         });
+
+        // 선택 버튼 생성 및 버튼 작업 수행
+        builder.setPositiveButton("선 택", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                List<String> selectedCategories = new ArrayList<>();
+                for(int i = 0; i < checkedItems.length; i++) {
+                    if(checkedItems[i]) {
+                        selectedCategories.add(bookCategories[i]);
+                    }
+                }
+
+                if(!selectedCategories.isEmpty()) {
+                    saveSelectedCategoriesDB(selectedCategories);
+                } else {
+                    showUserAlertDialog("카테고리 선택", "카테고리를 선택 해주세요!");
+                }
+            }
+        });
+
+        builder.setNegativeButton("취 소", null);
         builder.show();
+    }
+
+    // 대화상자(Dialog) 표시 메소드
+    private void showUserAlertDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("확 인", null)
+                .show();
     }
 
     // DB에 좋아한 책을 추가하는 메소드
@@ -353,7 +404,15 @@ public class BookRecommendActivity extends AppCompatActivity {
                 openBookLink(bookLink);
             }
         });
+
+
+
         dialog.show();
+    }
+
+    // 토스트 메시지 표시 메소드
+    private void showNoUIToastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     // 링크 클릭시 브라우저로 연결해주는 메소드
@@ -374,7 +433,7 @@ public class BookRecommendActivity extends AppCompatActivity {
     }
 
     /* 매일 작업을 예약하는 메소드
-    *  이 메소드를 통해 하루마다 추천할 책을 바꿔준다. */
+     *  이 메소드를 통해 하루마다 추천할 책을 바꿔준다. */
     private void scheduleDailyTask() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -393,7 +452,7 @@ public class BookRecommendActivity extends AppCompatActivity {
                 PendingIntent.FLAG_IMMUTABLE);
 
         /* 작업을 예약하는 코드.
-        *  WAKEUP을 통해 맞춰둔 시간에 작업이 실행이 되어 시스템을 깨운다. */
+         *  WAKEUP을 통해 맞춰둔 시간에 작업이 실행이 되어 시스템을 깨운다. */
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(
                 AlarmManager.RTC_WAKEUP,

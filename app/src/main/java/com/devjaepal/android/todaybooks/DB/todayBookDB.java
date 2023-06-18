@@ -67,6 +67,13 @@ public class todayBookDB extends SQLiteOpenHelper {
         db.insert("UserCategories", null, values);
         db.close();
     }
+    
+    // 카테고리 업데이트 갱신을 위한 테이블 삭제 메소드
+    public void deleteUserCategories() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("UserCategories", null,null);
+        db.close();
+    }
 
     // 사용자가 선택한 모든 카테고리 조회
     public List<String> getAllCategories() {
