@@ -23,6 +23,17 @@
 + `RecyclerView`를 이용한 동적으로 책 리스트 생성
 + `Retrofit`으로 네이버 API와 통신해 정보 요청
 
+## 📱 앱 실행 화면
+
++ **앱 최초 실행시 화면**
+![](./start_screen.png)
+
++ **메인 화면**
+![](./main_screen.png)
+
++ **좋아요한 책 리스트 화면**
+![](./like_books_list_screen.png)
+
 ___
 
 ## 🌳 프로젝트 트리
@@ -55,14 +66,3 @@ ___
 ## 🎨 초기 UI 설계
 
 ![](./ui_img.png)
-
-## 📱 앱 실행 화면
-
-+ 앱 최초 실행시 화면입니다.
-![](./start_screen.png)
-
-+ 메인 화면
-![](./main_screen.png)
-
-+ 좋아요한 책 리스트 화면
-![](./like_books_list_screen.png)
